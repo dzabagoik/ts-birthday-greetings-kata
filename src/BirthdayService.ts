@@ -47,7 +47,7 @@ export class BirthdayService {
         const lines = employeesData.split(/\r?\n/)
         lines.shift()
         const employees: Employee[] = lines.map(line =>{
-            const employeeData =  line.split(',')
+            const employeeData =  line.split(', ')
             return new Employee(employeeData[1], employeeData[0], employeeData[2], employeeData[3])
         })
         return employees

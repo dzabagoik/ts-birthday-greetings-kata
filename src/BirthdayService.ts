@@ -8,9 +8,11 @@ import SMTPTransport from 'nodemailer/lib/smtp-transport'
 
 export class BirthdayService {
     sendGreetings(ourDate: OurDate, smtpHost: string, smtpPort: number) {
-        const employees =  this.getEmployees('employee_data.txt')
-        const employeesBirthday = this.getEmployeesBirthday(employees,ourDate)
-
+        const employees : Employee[] =  this.getEmployees('employee_data.txt')
+        const employeesBirthday : Employee[] = this.getEmployeesBirthday(employees,ourDate)
+        this.sendHappyBirthdayEmail(employeesBirthday,smtpHost,smtpPort)
+        
+        /*
         employeesBirthday.forEach((employee) => {
             const recipient = employee.getEmail()
             const body = 'Happy Birthday, dear %NAME%!'.replace('%NAME%',
@@ -18,6 +20,7 @@ export class BirthdayService {
             const subject = 'Happy Birthday!'
             this.sendMessage(smtpHost, smtpPort, 'sender@here.com', subject, body, recipient)
         })
+        */
     }
 
     async sendMessage(smtpHost: string, smtpPort: number, sender: string,
@@ -55,8 +58,18 @@ export class BirthdayService {
 
     private getEmployeesBirthday(employees:Employee[], ourDate: OurDate):Employee[]{
         return employees.filter(employee => employee.isBirthday(ourDate))
-
     }
+
+    private sendHappyBirthdayEmail(employeesBirthday:Employee[], smtpHost: string, smtpPort: number){
+        employeesBirthday.forEach((employee) => {
+            const recipient = employee.getEmail()
+            const body = 'Happy Birthday, dear %NAME%!'.replace('%NAME%',
+            employee.getFirstName())
+            const subject = 'Happy Birthday!'
+            this.sendMessage(smtpHost, smtpPort, 'sender@here.com', subject, body, recipient)
+        })
+    }
+   
 }
 
 export interface Message extends SMTPTransport.Options, Mail.Options {

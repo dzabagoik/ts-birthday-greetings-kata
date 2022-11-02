@@ -9,14 +9,14 @@ import SMTPTransport from 'nodemailer/lib/smtp-transport'
 export class BirthdayService {
     sendGreetings(ourDate: OurDate, smtpHost: string, smtpPort: number) {
         const employees =  this.getEmployees('employee_data.txt')
-        employees.forEach((employee) => {
-            if (employee.isBirthday(ourDate)) {
-                const recipient = employee.getEmail()
-                const body = 'Happy Birthday, dear %NAME%!'.replace('%NAME%',
-                employee.getFirstName())
-                const subject = 'Happy Birthday!'
-                this.sendMessage(smtpHost, smtpPort, 'sender@here.com', subject, body, recipient)
-            }
+        const employeesBirthday = this.getEmployeesBirthday(employees,ourDate)
+
+        employeesBirthday.forEach((employee) => {
+            const recipient = employee.getEmail()
+            const body = 'Happy Birthday, dear %NAME%!'.replace('%NAME%',
+            employee.getFirstName())
+            const subject = 'Happy Birthday!'
+            this.sendMessage(smtpHost, smtpPort, 'sender@here.com', subject, body, recipient)
         })
     }
 
@@ -51,6 +51,11 @@ export class BirthdayService {
             return new Employee(employeeData[1], employeeData[0], employeeData[2], employeeData[3])
         })
         return employees
+    }
+
+    private getEmployeesBirthday(employees:Employee[], ourDate: OurDate):Employee[]{
+        return employees.filter(employee => employee.isBirthday(ourDate))
+
     }
 }
 
